@@ -24,9 +24,23 @@ footer {
     color: white;
     padding: 20px;
 }
+.welcome {
+	text-align: center;
+}
 .logo_image {
     width: 50px;
     height: 50px;
+}
+.nav {
+	display: flex;
+	justify-content: space-around;
+	background-color: silver;
+	padding: 10px;
+}
+.nav a {
+	text-decoration: none;
+	color: white;
+	cursor: pointer;
 }
 .btn {
 	padding: 10px;
