@@ -7,6 +7,9 @@ const favicon = require('serve-favicon');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+var User = require('./Models/user');
+var Post = require('./Models/post');
+
 const app = express();
 
 // view engine setup
@@ -28,24 +31,13 @@ app.use(express.static(path.join(__dirname, './bower_components')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost:27017/login_reg')
+mongoose.connect('mongodb://localhost:27017/the_wall')
     .then(success => {
         console.log("connected to db");
     })
     .catch(err => {
         console.log("unable to connect to database");
     })
-
-// user schema
-const UserSchema = new mongoose.Schema({
-    first_name: {type: String, required: [true, 'First name cannot be blank']},
-    last_name: {type: String, required: [true, 'Last name cannot be blank']},
-    email: {type: String, required: [true, 'Email cannot be blank'], lowercase: true},
-    password: {type: String, required: true}
-}, {timestamps: true})
-
-mongoose.model('User', UserSchema);
-const User = mongoose.model('User');
 
 app.get('/', function(req, res) {
     res.render('index');
@@ -107,6 +99,7 @@ app.post('/login', function(req, res) {
                     error_message.push("still fucked, what did you expect?")
                 }
                 else {
+                    //insert query for posts
                     res.render('success', {user: user});
                 }
             })
