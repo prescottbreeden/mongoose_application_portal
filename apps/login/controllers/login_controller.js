@@ -12,16 +12,19 @@ module.exports = {
         var error_message = [];
         var password = req.body.password;
         User.find({email: req.body.email}, function(err, user) {
-            if(err){
+            var validation = false;
+            if(err)
+            {
                 error_message.push("server fail")
             }
-            else {
-                if(user.length > 0) {
-                    error_message.push("email already exists")
-                }
-                else if(password === req.body.cpassword) {
-                    bcrypt.hash(password, 10, function(err, hash) {
-                        if(err){
+            if(!user) 
+            {
+                if(password === req.body.cpassword) 
+                {
+                    bcrypt.hash(password, 10, function(err, hash) 
+                    {
+                        if(err)
+                        {
                             error_message.push("server fail")
                         }
                         else {
@@ -32,16 +35,29 @@ module.exports = {
                                 email: req.body.email,
                                 password: password
                             })
-                            newUser.save(function(){
-                                res.redirect('/success');
+                            newUser.save(function(err, success)
+                            {
+                                if(err)
+                                {
+                                    console.log(err);
+                                }   
+                                else
+                                {
+                                    validation = true;
+                                    res.redirect('/success');
+                                }
                             })
                         }
                     })      
                 }
-                else {
-                    error_message.push("something went wrong")
-                    res.redirect('/failed', {errors: error_message});
-                }
+            }
+            if(validation === false) 
+            {
+                res.render('./login/views/failed');
+            }
+            else
+            {
+                
             }
         })                  
     },
@@ -52,30 +68,31 @@ module.exports = {
         User.findOne({email: req.body.login_email}, function(err, user) {
             if(err){
                 error_message.push("server broke")
-                res.render('./login/views/failed', {errors: error_message});
+                res.render('./login/views/failed');
             }
-            else if(user === null)
+            else if(!user)
             {
-                error_message.push("sigh....")
-                res.render('./login/views/failed', {errors: error_message});
+                res.render('./login/views/failed');
             }
             else 
             {
                 bcrypt.compare(req.body.login_password, user.password, function(err, result) {
                     console.log("inside bcrypt call");
-                    if(err) {
-                        error_message.push("server broke")
-                        res.render('./login/views/failed', {errors: error_message});
+                    if(err) 
+                    {
+                        res.render('./login/views/failed');
+    
                     }
                     else if(result === true)  
                     {
                         //insert query for posts
-                        console.log("WHYYYYYYYYY")
                         res.redirect('/success');
                     }
-                    else {
+                    else 
+                    {
                         error_message.push("incorrect password");
-                        res.redirect('/failed', {errors: error_message});
+                        res.redirect('/failed');
+    
                     }
                 })
             }
