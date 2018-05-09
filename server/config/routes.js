@@ -1,17 +1,18 @@
 const db = require('./dbConnect');
 
-var login = require('../controllers/login_controller');
-var quotes = require('../controllers/quotes_controller');
-var secrets = require('../controllers/secrets_controller');
+var login = require('../../apps/login/controllers/login_controller');
+var quotes = require('../../apps/quotes/controllers/quotes_controller');
+var secrets = require('../../apps/secrets/controllers/secrets_controller');
+var wall = require('../../apps/wall/controllers/wall_controller');
 
 module.exports = function(app) {
 
     //--------------------//
-    //--- quoting dojo ---//
+    //------ login -------//
     //--------------------//
     
     app.get('/', function(req, res) {
-        login.root(req, res);
+        login.login_home(req, res);
     });
     app.post('/register', function(req, res) {
        login.register(req, res);
@@ -22,11 +23,11 @@ module.exports = function(app) {
     })
     // user in session redirect to success
     app.get('/success', function(req, res) {
-        res.render('success')
+        login.success(req, res);
     })
     // something went wrong
     app.get('/failed', function(req, res) {
-        res.render('failed')
+        login.failed(req, res);
     })   
 
     //--------------------//
@@ -43,5 +44,13 @@ module.exports = function(app) {
 
     app.get('/secrets', function(req, res) {
         secrets.secrets_home(req, res);
+    })
+
+    //--------------------//
+    //----- the wall -----//
+    //--------------------//
+
+    app.get('/wall', function(req, res) {
+        wall.wall_home(req, res);
     })
 }
